@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="ANGEL TIER - Bảng xếp hạng PvP Minecraft Việt Nam. Đăng ký Test Tier, leo hạng và khẳng định đẳng cấp của bạn.">
+    <meta name="theme-color" content="#030304">
+    <title>ANGEL TIER - Bảng Xếp Hạng PvP Việt Nam</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+    {% raw %}
+        :root {
+            --bg-void: #030304;
+            --bg-card: rgba(16, 17, 23, 0.55);
+            --bg-card-solid: #0c0d13;
+            --bg-card-border: rgba(255, 255, 255, 0.1);
+            --bg-card-border-strong: rgba(255, 255, 255, 0.32);
+            --pure-white: #ffffff;
+            --text-silver: #a3a7ba;
+            --text-dim: #5c6076;
+            --gold: #f2d29a;
+            --glow-white: rgba(255, 255, 255, 0.25);
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-heading: 'Cinzel', serif;
+            --ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-main);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-void);
+            background-image:
+                radial-gradient(circle at 50% -5%, rgba(255, 255, 255, 0.09) 0%, transparent 50%),
+                radial-gradient(circle at 50% 105%, rgba(255, 255, 255, 0.04) 0%, transparent 40%);
+            color: var(--pure-white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        header, section, footer {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Film grain + vignette (khung điện ảnh) */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 36;
+            pointer-events: none;
+            opacity: 0.035;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.4) 100%);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-void); }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--text-dim), var(--text-silver));
+            border-radius: 10px;
+            border: 2px solid var(--bg-void);
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--pure-white); }
+
+        /* ---------------- INTRO LOADER (RÈM MỞ MÀN) ---------------- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+        .curtain {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            background: var(--bg-void);
+            transition: transform 0.8s var(--ease-cinema);
+        }
+        .curtain-left { left: 0; }
+        .curtain-right { right: 0; }
+        #loader.hide .curtain-left { transform: translateX(-100%); }
+        #loader.hide .curtain-right { transform: translateX(100%); }
+        .loader-mark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-heading);
+            letter-spacing: 8px;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            color: #fff;
+            opacity: 0.85;
+            animation: loaderPulse 1.2s ease-in-out infinite;
+            transition: opacity 0.35s ease;
+            white-space: nowrap;
+        }
+        #loader.hide .loader-mark { opacity: 0; }
+        @keyframes loaderPulse {
+            0%, 100% { opacity: 0.35; letter-spacing: 8px; }
+            50% { opacity: 1; letter-spacing: 11px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.7); }
+        }
+
+        /* ---------------- AURORA + PARTICLES (BẦU KHÔNG KHÍ) ---------------- */
+        .aurora-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.4;
+            mix-blend-mode: screen;
+            animation: auroraDrift 30s ease-in-out infinite;
+        }
+        .aurora-blob.b1 {
+            width: 480px; height: 480px; top: -12%; left: 4%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.55), transparent 70%);
+            animation-duration: 32s;
+        }
+        .aurora-blob.b2 {
+            width: 540px; height: 540px; top: 18%; right: -12%;
+            background: radial-gradient(circle, rgba(242, 210, 154, 0.32), transparent 70%);
+            animation-duration: 36s; animation-delay: -9s;
+        }
+        .aurora-blob.b3 {
+            width: 420px; height: 420px; bottom: -16%; left: 28%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+            animation-duration: 28s; animation-delay: -16s;
+        }
+        @keyframes auroraDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -30px) scale(1.08); }
+            66% { transform: translate(-30px, 22px) scale(0.95); }
+        }
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ---------------- NAVBAR ---------------- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 8%;
+            background: rgba(3, 3, 4, 0.75);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            border-bottom: 1px solid var(--bg-card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.4s var(--ease-soft), background 0.4s ease, box-shadow 0.4s ease;
+        }
+        header.scrolled {
+            padding: 12px 8%;
+            background: rgba(3, 3, 4, 0.94);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-wrapper {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+            gap: 10px;
+        }
+        .logo-img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+        .logo-img.img-broken { display: none; }
+        .logo-fallback-text {
+            display: none;
+            font-family: var(--font-heading);
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            font-size: 1.25rem;
+        }
+        .logo-wrapper:has(.logo-img.img-broken) .logo-fallback-text { display: inline-block; }
+        .logo-wrapper:hover { transform: scale(1.03); }
+        .logo-wrapper:hover .logo-img { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6)); }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav-link {
+            position: relative;
+            color: var(--text-silver);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: -6px;
+            width: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--pure-white), transparent);
+            transition: width 0.35s var(--ease-soft);
+        }
+        .nav-link:hover { color: var(--pure-white); }
+        .nav-link:hover::after { width: 100%; }
+
+        .btn-discord {
+            background: #ffffff;
+            color: #000000;
+            padding: 10px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 15px var(--glow-white);
+            transition: all 0.3s ease;
+        }
+        .btn-discord:hover {
+            background: #e6e6e6;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            position: relative;
+            z-index: 110;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .menu-toggle span {
+            width: 24px; height: 2px; background: #fff; border-radius: 2px;
+            transition: all 0.35s var(--ease-soft);
+        }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .nav-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(2px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 104;
+        }
+        .nav-overlay.show { opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 900px) {
+            .menu-toggle { display: flex; }
+            .nav-links {
+                position: fixed; top: 0; right: 0; height: 100vh;
+                width: min(78vw, 320px);
+                background: rgba(4, 4, 6, 0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column; align-items: flex-start; justify-content: center;
+                gap: 26px; padding: 40px;
+                transform: translateX(100%);
+                transition: transform 0.45s var(--ease-cinema);
+                border-left: 1px solid var(--bg-card-border);
+                z-index: 105;
+            }
+            .nav-links.open { transform: translateX(0); }
+        }
+
+        /* ---------------- HERO ---------------- */
+        .hero-container {
+            max-width: 1280px;
+            margin: 56px auto 0;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 36px;
+        }
+        .hero-left { display: flex; flex-direction: column; gap: 26px; }
+
+        .hero-anim {
+            opacity: 0;
+            transform: translateY(28px);
+            filter: blur(6px);
+            transition: opacity 1s var(--ease-cinema), transform 1s var(--ease-cinema), filter 1s var(--ease-cinema),
+                        border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        .hero-anim.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        .badge-tag {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--bg-card-border);
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--pure-white);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(6px);
+        }
+        .badge-dot {
+            width: 7px; height: 7px; border-radius: 50%; background: #fff;
+            box-shadow: 0 0 8px #fff, 0 0 16px var(--glow-white);
+            animation: livePulse 1.8s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2.3rem, 5.2vw, 3.7rem);
+            font-weight: 800;
+            line-height: 1.14;
+            letter-spacing: -0.5px;
+        }
+        .title-line { display: block; }
+        .title-line.gradient-text {
+            background: linear-gradient(180deg, #ffffff 0%, #cfd3de 45%, #7d8299 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            color: var(--text-silver);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            max-width: 92%;
+        }
+
+        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+        .btn-primary, .btn-secondary {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.4s var(--ease-soft), box-shadow 0.4s ease, background 0.3s ease;
+        }
+        .btn-primary::before, .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -60%;
+            width: 40%; height: 100%;
+            transform: skewX(-20deg);
+            transition: left 0.7s ease;
+            z-index: -1;
+        }
+        .btn-primary:hover::before, .btn-secondary:hover::before { left: 130%; }
+
+        .btn-primary {
+            background: #ffffff; color: #000000;
+            box-shadow: 0 0 20px var(--glow-white);
+        }
+        .btn-primary::before { background: linear-gradient(120deg, transparent, rgba(0, 0, 0, 0.15), transparent); }
+        .btn-primary:hover {
+            background: #e6e6e6;
+            transform: translateY(-4px);
+            box-shadow: 0 14px 34px rgba(255, 255, 255, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--bg-card-border);
+            color: var(--pure-white);
+        }
+        .btn-secondary::before { background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent); }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-4px);
+        }
+
+        /* Tier Journey Card */
+        .tier-journey-card {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 18px;
+            padding: 24px;
+            margin-top: 8px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+        }
+        .tier-journey-card:hover { border-color: var(--bg-card-border-strong); }
+
+        .journey-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .journey-title { font-size: 0.95rem; font-weight: 700; }
+        .journey-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        .journey-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--pure-white);
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .chart-box { position: relative; width: 100%; height: 120px; margin-top: 10px; }
+        .chart-svg { width: 100%; height: 100%; overflow: visible; }
+        .chart-svg .chart-line { filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5)); }
+        .final-node-group {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: finalPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes finalPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* Hero Right (Leaderboard + Modes) */
+        .hero-right {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 22px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(18px);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-right::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent 0%, rgba(255, 255, 255, 0.05) 8%, transparent 18%);
+            animation: sheenRotate 9s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-right > * { position: relative; z-index: 1; }
+        @keyframes sheenRotate { to { transform: rotate(360deg); } }
+        .hero-right:hover { border-color: var(--bg-card-border-strong); }
+
+        .lb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .lb-title-group h3 { font-size: 1.3rem; font-weight: 700; }
+        .lb-title-group .live-tag {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.75rem; color: var(--text-silver);
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+        }
+
+        .overall-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--pure-white);
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .overall-btn:hover { background: var(--pure-white); color: #000; }
+
+        .top-players-empty {
+            position: relative;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(255, 255, 255, 0.16);
+            border-radius: 16px;
+            padding: 46px 20px;
+            text-align: center;
+            color: var(--text-silver);
+            overflow: hidden;
+        }
+        .empty-icon-wrap {
+            width: 62px; height: 62px; margin: 0 auto 14px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.14), transparent 70%);
+            animation: floatIcon 3.4s ease-in-out infinite;
+        }
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .top-players-empty i { font-size: 1.8rem; color: #fff; opacity: 0.85; }
+        .scan-line {
+            position: absolute; left: 0; right: 0; height: 55%; top: -55%;
+            background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+            animation: scanSweep 3.2s ease-in-out infinite;
+        }
+        @keyframes scanSweep {
+            0% { top: -55%; }
+            100% { top: 100%; }
+        }
+
+        .modes-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+        }
+        .modes-header span {
+            font-size: 0.75rem; color: var(--text-silver);
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+        }
+
+        .modes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .mode-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 14px;
+            padding: 16px 8px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            cursor: pointer;
+            transition: transform 0.35s var(--ease-soft), border-color 0.35s ease, box-shadow 0.35s ease;
+            overflow: hidden;
+        }
+        .mode-item::after {
+            content: '';
+            position: absolute; inset: 0; border-radius: 14px; padding: 1px;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        .mode-item:hover, .mode-item.active {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .mode-item:hover::after, .mode-item.active::after { opacity: 1; }
+        .mode-item.pulse-select { animation: modeSelectPulse 0.5s ease; }
+        @keyframes modeSelectPulse {
+            0% { box-shadow: 0 0 0 rgba(255, 255, 255, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.5); }
+            100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        .mode-icon-box {
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .mode-icon {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            filter: grayscale(100%) brightness(1.2);
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+        .mode-icon.img-broken { display: none; }
+        .mode-icon-box::after {
+            content: '\f03e';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute; inset: 0;
+            display: none; align-items: center; justify-content: center;
+            color: var(--text-dim); font-size: 1.2rem;
+        }
+        .mode-icon-box:has(.mode-icon.img-broken)::after { display: flex; }
+        .mode-item:hover .mode-icon, .mode-item.active .mode-icon { filter: grayscale(0%) brightness(1); }
+
+        .mode-name {
+            font-size: 0.75rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--text-silver);
+        }
+        .mode-item.active .mode-name { color: var(--pure-white); }
+
+        /* ---------------- STATS ---------------- */
+        .stats-section { max-width: 1280px; margin: 100px auto; padding: 0 24px; text-align: center; }
+        .stats-subtitle {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--text-dim); font-weight: 700; margin-bottom: 8px;
+        }
+        .stats-title {
+            font-family: var(--font-heading);
+            font-size: clamp(1.9rem, 4vw, 2.6rem);
+            font-weight: 800; margin-bottom: 54px;
+        }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            padding: 44px 20px;
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        .stat-card:hover { border-color: rgba(255, 255, 255, 0.4); }
+        .stat-number {
+            font-family: var(--font-heading);
+            font-size: clamp(2.6rem, 5vw, 3.7rem);
+            font-weight: 800;
+            color: var(--pure-white);
+            text-shadow: 0 0 25px rgba(255, 255, 255, 0.35);
+            margin-bottom: 10px; line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.85rem; color: var(--text-silver);
+            text-transform: uppercase; font-weight: 700; letter-spacing: 1px;
+        }
+
+        /* ---------------- TESTING FLOW ---------------- */
+        .flow-section {
+            max-width: 1280px; margin: 110px auto; padding: 0 24px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+        }
+        .flow-card-display {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        .flow-card-display:hover { border-color: var(--bg-card-border-strong); }
+        .flow-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .flow-badge { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-silver); font-weight: 700; }
+        .flow-counter { background: rgba(255, 255, 255, 0.1); padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; }
+
+        .flow-main-content {
+            text-align: center; padding: 30px 0; min-height: 220px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .flow-icon { font-size: 3.5rem; color: var(--pure-white); margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4)); }
+        .flow-step-num { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); font-weight: 700; margin-bottom: 6px; }
+        .flow-step-title { font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+        .flow-step-desc { color: var(--text-silver); font-size: 0.95rem; max-width: 80%; margin: 0 auto; }
+
+        .flow-progress-bar { display: flex; gap: 8px; margin-top: 40px; }
+        .progress-segment {
+            flex: 1; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .progress-segment.active { background: var(--pure-white); box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+
+        .flow-info-right { display: flex; flex-direction: column; gap: 20px; }
+        .flow-info-right h2 { font-family: var(--font-heading); font-size: clamp(1.9rem, 4vw, 2.7rem); font-weight: 800; line-height: 1.25; }
+        .flow-info-right h2 span { color: var(--text-silver); }
+        .flow-info-right p { color: var(--text-silver); line-height: 1.7; font-size: 1rem; }
+
+        .flow-tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 10px; }
+        .tag-box { background: var(--bg-card); border: 1px solid var(--bg-card-border); padding: 16px; border-radius: 12px; }
+        .tag-box-val { font-size: 1.2rem; font-weight: 800; color: var(--pure-white); margin-bottom: 4px; }
+        .tag-box-lbl { font-size: 0.7rem; color: var(--text-silver); text-transform: uppercase; font-weight: 700; }
+
+        /* ---------------- FAQ ---------------- */
+        .faq-section { max-width: 900px; margin: 110px auto; padding: 0 24px; }
+        .faq-header { text-align: center; margin-bottom: 50px; }
+        .faq-header h2 { font-family: var(--font-heading); font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 800; margin-bottom: 16px; }
+        .faq-header p { color: var(--text-silver); font-size: 0.95rem; line-height: 1.6; }
+
+        .faq-accordion { display: flex; flex-direction: column; gap: 16px; }
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .faq-item.active { border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 10px 30px rgba(255, 255, 255, 0.06); }
+        .faq-question {
+            padding: 22px 28px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; font-weight: 700; font-size: 1.05rem;
+            transition: color 0.3s ease;
+        }
+        .faq-question:hover { color: #fff; }
+
+        .faq-answer-wrap {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.5s var(--ease-soft);
+            border-top: 0px solid rgba(255, 255, 255, 0.05);
+        }
+        .faq-item.active .faq-answer-wrap { grid-template-rows: 1fr; }
+        .faq-answer {
+            overflow: hidden;
+            color: var(--text-silver);
+            line-height: 1.7;
+            font-size: 0.95rem;
+            padding: 0 28px;
+            transition: padding 0.4s ease;
+        }
+        .faq-item.active .faq-answer { padding: 4px 28px 24px; }
+
+        .faq-icon { transition: transform 0.3s ease; color: var(--text-silver); flex-shrink: 0; margin-left: 12px; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+
+        /* ---------------- FOOTER ---------------- */
+        footer {
+            position: relative;
+            border-top: 1px solid var(--bg-card-border);
+            padding: 44px 8%;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 110px;
+        }
+        footer::before {
+            content: '';
+            position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+            width: 140px; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        }
+
+        /* ---------------- SCROLL REVEAL ---------------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.9s var(--ease-cinema), transform 0.9s var(--ease-cinema);
+        }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+        .reveal-stagger > * {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s var(--ease-cinema), transform 0.7s var(--ease-cinema);
+        }
+        .reveal-stagger.in-view > * { opacity: 1; transform: translateY(0); }
+        .reveal-stagger.in-view > *:nth-child(1) { transition-delay: 0.05s; }
+        .reveal-stagger.in-view > *:nth-child(2) { transition-delay: 0.15s; }
+        .reveal-stagger.in-view > *:nth-child(3) { transition-delay: 0.25s; }
+        .reveal-stagger.in-view > *:nth-child(4) { transition-delay: 0.35s; }
+        .reveal-stagger.in-view > *:nth-child(5) { transition-delay: 0.45s; }
+        .reveal-stagger.in-view > *:nth-child(6) { transition-delay: 0.55s; }
+        .reveal-stagger.in-view > *:nth-child(7) { transition-delay: 0.65s; }
+        .reveal-stagger.in-view > *:nth-child(8) { transition-delay: 0.75s; }
+
+        /* ---------------- RESPONSIVE ---------------- */
+        @media (max-width: 992px) {
+            .hero-container, .flow-section { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .hero-container { margin-top: 36px; }
+        }
+
+        @media (max-width: 640px) {
+            header { padding: 16px 6%; }
+            header.scrolled { padding: 10px 6%; }
+            .hero-container { padding: 0 18px; gap: 26px; }
+            .hero-right, .tier-journey-card, .flow-card-display { padding: 22px; }
+            .stats-section, .flow-section, .faq-section { margin-top: 76px; margin-bottom: 76px; }
+            .flow-step-desc { max-width: 95%; }
+        }
+
+        @media (max-width: 480px) {
+            .modes-grid { grid-template-columns: repeat(2, 1fr); }
+            .btn-primary, .btn-secondary { padding: 13px 22px; font-size: 0.92rem; }
+            .flow-tags-grid { gap: 10px; }
+            .tag-box { padding: 12px 8px; }
+        }
+
+        /* ---------------- REDUCED MOTION ---------------- */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    {% endraw %}
+    </style>
+</head>
+<body>
+
+    <!-- Rèm mở màn (intro cinematic) -->
+    <div id="loader">
+        <div class="curtain curtain-left"></div>
+        <div class="curtain curtain-right"></div>
+        <div class="loader-mark">ANGEL TIER</div>
+    </div>
+
+    <!-- Bầu không khí nền: aurora + particles -->
+    <div class="aurora-layer" aria-hidden="true">
+        <div class="aurora-blob b1"></div>
+        <div class="aurora-blob b2"></div>
+        <div class="aurora-blob b3"></div>
+    </div>
+    <canvas id="particles" aria-hidden="true"></canvas>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="#" class="logo-wrapper">
+            <img class="logo-img" src="https://media.discordapp.net/attachments/1517832164979245117/1534765652017942670/1785585857892-removebg-preview.png?ex=6a755166&is=6a73ffe6&hm=ae33067e09d4d7cfc23d136b8e77527637b87ec336088f650843da76a0abdf4b&=&format=webp&quality=lossless" alt="ANGEL TIER Logo" onerror="this.classList.add('img-broken')">
+            <span class="logo-fallback-text">ANGEL TIER</span>
+        </a>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="#leaderboard" class="nav-link">Bảng Xếp Hạng</a>
+            <a href="#flow" class="nav-link">Quy Trình Test</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+            <a href="https://discord.gg" target="_blank" rel="noopener" class="btn-discord">
+                <i class="fa-brands fa-discord" aria-hidden="true"></i> Discord
+            </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+
+        <div class="nav-overlay" id="navOverlay"></div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-container" id="leaderboard">
+        <div class="hero-left">
+            <div class="badge-tag hero-anim" data-delay="100">
+                <span class="badge-dot"></span>
+                Cộng Đồng Minecraft PvP Việt Nam
+            </div>
+
+            <h1 class="hero-title">
+                <span class="title-line hero-anim" data-delay="220">Bảng Xếp Hạng</span>
+                <span class="title-line gradient-text hero-anim" data-delay="380">ANGEL TIER</span>
+            </h1>
+
+            <p class="hero-desc hero-anim" data-delay="520">
+                Gặp gỡ các người chơi Minecraft PvP hàng đầu tại Việt Nam, khám phá BXH Tier ở nhiều Mode khác nhau và tham gia Test để đánh giá trình độ của bạn.
+            </p>
+
+            <div class="hero-actions hero-anim" data-delay="650">
+                <a href="#leaderboard" class="btn-primary">
+                    <i class="fa-solid fa-trophy" aria-hidden="true"></i> Bảng Xếp Hạng
+                </a>
+                <a href="#flow" class="btn-secondary">
+                    <i class="fa-solid fa-khanda" aria-hidden="true"></i> Tham gia ngay!
+                </a>
+            </div>
+
+            <!-- Tier Chart Card -->
+            <div class="tier-journey-card tilt hero-anim" data-delay="780" data-tilt-strength="8">
+                <div class="journey-header">
+                    <div>
+                        <div class="journey-subtitle">HỆ THỐNG TIER</div>
+                        <div class="journey-title">Hành trình leo Rank</div>
+                    </div>
+                    <div class="journey-badge">10 Cấp Bậc</div>
+                </div>
+
+                <div class="chart-box">
+                    <svg class="chart-svg" viewBox="0 0 400 100">
+                        <defs>
+                            <linearGradient id="chartGradient" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#555555"/>
+                                <stop offset="50%" stop-color="#aaaaaa"/>
+                                <stop offset="100%" stop-color="#ffffff"/>
+                            </linearGradient>
+                            <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.32"/>
+                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+
+                        <path class="chart-area" d="M 20 80 Q 100 70, 180 50 T 380 20 L 380 100 L 20 100 Z" fill="url(#areaGradient)" stroke="none"/>
+                        <path class="chart-line" d="M 20 80 Q 100 70, 180 50 T 380 20" fill="none" stroke="url(#chartGradient)" stroke-width="3" stroke-linecap="round"/>
+
+                        <circle cx="20" cy="80" r="4" fill="#666666"/>
+                        <text x="14" y="96" fill="#888888" font-size="10" font-weight="bold">LT5</text>
+
+                        <circle cx="100" cy="72" r="4" fill="#808080"/>
+                        <text x="93" y="90" fill="#888888" font-size="10" font-weight="bold">HT4</text>
+
+                        <circle cx="180" cy="55" r="4" fill="#9a9a9a"/>
+                        <text x="173" y="73" fill="#888888" font-size="10" font-weight="bold">HT3</text>
+
+                        <circle cx="280" cy="35" r="4" fill="#cccccc"/>
+                        <text x="272" y="53" fill="#aaaaaa" font-size="10" font-weight="bold">LT2</text>
+
+                        <g class="final-node-group">
+                            <circle cx="380" cy="20" r="10" fill="#ffffff" opacity="0.18"/>
+                            <circle cx="380" cy="20" r="5" fill="#ffffff"/>
+                        </g>
+                        <text x="362" y="38" fill="#ffffff" font-size="10" font-weight="bold">HT1</text>
+                    </svg>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 15px;">
+                    Mỗi Mode có Tier riêng. Tier càng cao thì điểm tổng cộng tăng trên bảng xếp hạng.
+                </p>
+            </div>
+        </div>
+
+        <!-- Hero Right (Leaderboard & Modes) -->
+        <div class="hero-right tilt hero-anim" data-delay="500" data-tilt-strength="5">
+            <div>
+                <div class="lb-header">
+                    <div class="lb-title-group">
+                        <span class="live-tag"><span class="badge-dot" style="width:6px;height:6px;"></span> LIVE LEADERBOARD</span>
+                        <h3>Top Players</h3>
+                    </div>
+                    <button class="overall-btn" type="button">Overall</button>
+                </div>
+
+                <div class="top-players-empty">
+                    <div class="scan-line"></div>
+                    <div class="empty-icon-wrap">
+                        <i class="fa-solid fa-users-slash" aria-hidden="true"></i>
+                    </div>
+                    <p style="font-weight: 700; color: #fff; margin-bottom: 4px;">Chưa có dữ liệu người chơi</p>
+                    <p style="font-size: 0.85rem;">Danh sách xếp hạng sẽ được cập nhật sau đợt Test tới.</p>
+                </div>
+            </div>
+
+            <!-- Gamemodes Grid -->
+            <div>
+                <div class="modes-header">
+                    <span>MODES LEADERBOARD</span>
+                    <span>8 Chế Độ</span>
+                </div>
+
+                <div class="modes-grid">
+                    <div class="mode-item active">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760712659013783/Screenshot_20260802-181657_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=37db58062ec04a2c4426bd6bf5ae103b909dc8ebe200abf26715bd7cb6bdbc21&=&format=webp&quality=lossless" alt="Sword" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">SWORD</span>
+                    </div>
+                    <div class="mode-item">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760713757921390/Screenshot_20260802-181711_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=ec3a2c3477dba88c7611ad0fa3a1af200a80e7231f80d60803348b3d344c56be&=&format=webp&quality=lossless" alt="Nethop" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">NETHOP</span>
+                    </div>
+                    <div class="mode-item">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760712184791081/Screenshot_20260802-181714_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=3524d0f0c06f0b864caa1eb9742fb17390f07cf09942585b4aa384ebf5201dd8&=&format=webp&quality=lossless" alt="Pot" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">POT</span>
+                    </div>
+                    <div class="mode-item">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760713229308011/Screenshot_20260802-181659_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=ab4b9706f2ed34f218572773d6e8ea84ff47cab52f7a076ff5442157217f481d&=&format=webp&quality=lossless" alt="SMP" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">SMP</span>
+                    </div>
+                    <div class="mode-item">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760714114433096/Screenshot_20260802-181716_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=720b1d9eba49e325ec2222894de08e5ea1c69a3b770b4ab77e92de9a1b876cc7&=&format=webp&quality=lossless" alt="UHC" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">UHC</span>
+                    </div>
+                    <div class="mode-item">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760711828541460/Screenshot_20260802-181654_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=b41ac6f6f573c0f779c94804316f63b0b956f68ac571223d054c1b2425ae74a6&=&format=webp&quality=lossless" alt="Axe" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">AXE</span>
+                    </div>
+                    <div class="mode-item">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760714386804767/Screenshot_20260802-181719_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=30c7ccdd842551b5b1f2d27be360b83f7ea7473a58d19c1d658f842452ab66a1&=&format=webp&quality=lossless" alt="Vanilla" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">VANILLA</span>
+                    </div>
+                    <div class="mode-item">
+                        <div class="mode-icon-box">
+                            <img class="mode-icon" src="https://media.discordapp.net/attachments/1517832164979245117/1534760711509639218/Screenshot_20260802-181648_Chrome-removebg-preview.png?ex=6a754ccc&is=6a73fb4c&hm=858a0530d52f006862de7b78aca08b3ec4a87ec9b2b8471c9b7db7fd9bcedbb7&=&format=webp&quality=lossless" alt="Mace" onerror="this.classList.add('img-broken')">
+                        </div>
+                        <span class="mode-name">MACE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Thống kê hệ thống -->
+    <section class="stats-section">
+        <div class="stats-subtitle reveal">NHỮNG CON SỐ NỔI BẬT</div>
+        <h2 class="stats-title reveal">Thống kê hệ thống</h2>
+
+        <div class="stats-grid reveal-stagger">
+            <div class="stat-card tilt" data-tilt-strength="7">
+                <div class="stat-number">{{ stats.active_testers }}</div>
+                <div class="stat-label">TESTER HOẠT ĐỘNG</div>
+            </div>
+            <div class="stat-card tilt" data-tilt-strength="7">
+                <div class="stat-number">{{ stats.tested_players }}</div>
+                <div class="stat-label">NGƯỜI CHƠI ĐÃ ĐƯỢC TEST</div>
+            </div>
+            <div class="stat-card tilt" data-tilt-strength="7">
+                <div class="stat-number">{{ stats.completed_tests }}</div>
+                <div class="stat-label">BÀI TEST ĐÃ HOÀN THÀNH</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quy trình Test -->
+    <section class="flow-section" id="flow">
+        <div class="flow-card-display tilt reveal" data-tilt-strength="7">
+            <div class="flow-card-header">
+                <span class="flow-badge">TESTING FLOW</span>
+                <span class="flow-counter" id="stepCounter">1/4</span>
+            </div>
+
+            <div class="flow-main-content">
+                <i class="fa-solid fa-gamepad flow-icon" id="flowIcon" aria-hidden="true"></i>
+                <div class="flow-step-num" id="flowStepNum">BƯỚC 01</div>
+                <div class="flow-step-title" id="flowStepTitle">Đăng Ký Test</div>
+                <div class="flow-step-desc" id="flowStepDesc">
+                    Tham gia Server Discord chính thức và gửi yêu cầu đăng ký Test trình độ PvP.
+                </div>
+            </div>
+
+            <div class="flow-progress-bar">
+                <div class="progress-segment active" data-index="0"></div>
+                <div class="progress-segment" data-index="1"></div>
+                <div class="progress-segment" data-index="2"></div>
+                <div class="progress-segment" data-index="3"></div>
+            </div>
+        </div>
+
+        <div class="flow-info-right reveal">
+            <h2>Quy trình <span>Test PvP</span> Minh Bạch</h2>
+            <p>Hệ thống đánh giá kỹ năng PvP tiêu chuẩn, đảm bảo công bằng cho mọi cựu binh lẫn người chơi mới.</p>
+            <div class="flow-tags-grid reveal-stagger">
+                <div class="tag-box">
+                    <div class="tag-box-val">100%</div>
+                    <div class="tag-box-lbl">Minh Bạch</div>
+                </div>
+                <div class="tag-box">
+                    <div class="tag-box-val">8+</div>
+                    <div class="tag-box-lbl">Chế Độ PvP</div>
+                </div>
+                <div class="tag-box">
+                    <div class="tag-box-val">24/7</div>
+                    <div class="tag-box-lbl">Hỗ Trợ</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="faq-header reveal">
+            <h2>Câu Hỏi Thường Gặp</h2>
+            <p>Giải đáp các thắc mắc về hệ thống tính điểm và quy trình đăng ký xếp hạng.</p>
+        </div>
+
+        <div class="faq-accordion reveal-stagger">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Làm thế nào để tham gia Test Tier?</span>
+                    <i class="fa-solid fa-chevron-down faq-icon" aria-hidden="true"></i>
+                </div>
+                <div class="faq-answer-wrap">
+                    <div class="faq-answer">
+                        Bạn chỉ cần tham gia Discord chính thức của ANGEL TIER, vào kênh #dang-ky-test và làm theo hướng dẫn từ Admin/Tester.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Có bao nhiêu cấp bậc (Tier) trong hệ thống?</span>
+                    <i class="fa-solid fa-chevron-down faq-icon" aria-hidden="true"></i>
+                </div>
+                <div class="faq-answer-wrap">
+                    <div class="faq-answer">
+                        Hệ thống gồm 10 cấp bậc từ LT5 (Low Tier 5) đến HT1 (High Tier 1). Mỗi Mode thi đấu sẽ có xếp hạng Tier độc lập.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Bao lâu thì bảng xếp hạng được cập nhật?</span>
+                    <i class="fa-solid fa-chevron-down faq-icon" aria-hidden="true"></i>
+                </div>
+                <div class="faq-answer-wrap">
+                    <div class="faq-answer">
+                        Bảng xếp hạng được cập nhật ngay lập tức sau khi trận Test hoàn tất và được Tester xác nhận kết quả.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2026 ANGEL TIER. Powered by Community. All rights reserved.
+    </footer>
+
+    <!-- JavaScripts -->
+    <script>
+    {% raw %}
+        document.addEventListener('DOMContentLoaded', function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            /* ---------- Intro loader ---------- */
+            const loader = document.getElementById('loader');
+            if (loader) {
+                if (reduceMotion) {
+                    loader.style.display = 'none';
+                } else {
+                    setTimeout(function () {
+                        loader.classList.add('hide');
+                        setTimeout(function () { loader.style.display = 'none'; }, 850);
+                    }, 350);
+                }
+            }
+
+            /* ---------- Hero cinematic entrance ---------- */
+            document.querySelectorAll('.hero-anim').forEach(function (el) {
+                const delay = parseInt(el.dataset.delay || '0', 10);
+                setTimeout(function () { el.classList.add('visible'); }, delay);
+            });
+
+            /* ---------- Header scroll state ---------- */
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 40) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
+            }, { passive: true });
+
+            /* ---------- Mobile menu ---------- */
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+            const navOverlay = document.getElementById('navOverlay');
+            function closeMenu() {
+                menuToggle.classList.remove('active');
+                navLinks.classList.remove('open');
+                navOverlay.classList.remove('show');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+            function openMenu() {
+                menuToggle.classList.add('active');
+                navLinks.classList.add('open');
+                navOverlay.classList.add('show');
+                menuToggle.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            }
+            if (menuToggle && navLinks && navOverlay) {
+                menuToggle.addEventListener('click', function () {
+                    if (navLinks.classList.contains('open')) closeMenu(); else openMenu();
+                });
+                navOverlay.addEventListener('click', closeMenu);
+                navLinks.querySelectorAll('a').forEach(function (a) {
+                    a.addEventListener('click', closeMenu);
+                });
+            }
+
+            /* ---------- Scroll reveal ---------- */
+            const revealObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+            document.querySelectorAll('.reveal, .reveal-stagger').forEach(function (el) {
+                revealObserver.observe(el);
+            });
+
+            /* ---------- 3D tilt (chỉ cho thiết bị có chuột) ---------- */
+            if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+                document.querySelectorAll('.tilt').forEach(function (el) {
+                    const strength = parseFloat(el.dataset.tiltStrength) || 8;
+                    let rect = null;
+                    el.addEventListener('mouseenter', function () {
+                        rect = el.getBoundingClientRect();
+                        el.style.transition = 'transform 0.1s ease';
+                    });
+                    el.addEventListener('mousemove', function (e) {
+                        if (!rect) rect = el.getBoundingClientRect();
+                        const px = (e.clientX - rect.left) / rect.width;
+                        const py = (e.clientY - rect.top) / rect.height;
+                        const rx = (py - 0.5) * -strength;
+                        const ry = (px - 0.5) * strength;
+                        el.style.transform = 'perspective(900px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-4px)';
+                    });
+                    el.addEventListener('mouseleave', function () {
+                        el.style.transition = 'transform 0.6s cubic-bezier(0.16,1,0.3,1)';
+                        el.style.transform = 'perspective(900px) rotateX(0) rotateY(0) translateY(0)';
+                    });
+                });
+            }
+
+            /* ---------- Animated stat counters ---------- */
+            function formatVN(num) { return num.toLocaleString('vi-VN'); }
+            function animateCounter(el) {
+                const raw = el.textContent.trim();
+                const numeric = parseInt(raw.replace(/[^\d]/g, ''), 10) || 0;
+                const suffix = raw.replace(/[\d.,]/g, '');
+                const duration = 1600;
+                let start = null;
+                function step(ts) {
+                    if (!start) start = ts;
+                    const progress = Math.min((ts - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.floor(eased * numeric);
+                    el.textContent = formatVN(current) + suffix;
+                    if (progress < 1) requestAnimationFrame(step);
+                    else el.textContent = formatVN(numeric) + suffix;
+                }
+                if (reduceMotion) { el.textContent = formatVN(numeric) + suffix; }
+                else requestAnimationFrame(step);
+            }
+            const counterObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            document.querySelectorAll('.stat-number').forEach(function (el) {
+                counterObserver.observe(el);
+            });
+
+            /* ---------- SVG chart draw-in ---------- */
+            const chartLine = document.querySelector('.chart-svg .chart-line');
+            const chartBox = document.querySelector('.chart-box');
+            if (chartLine && chartBox) {
+                const length = chartLine.getTotalLength();
+                chartLine.style.strokeDasharray = length;
+                chartLine.style.strokeDashoffset = length;
+                const chartObserver = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            chartLine.style.transition = 'stroke-dashoffset 1.8s var(--ease-cinema)';
+                            chartLine.style.strokeDashoffset = '0';
+                            chartObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.4 });
+                chartObserver.observe(chartBox);
+            }
+
+            /* ---------- Testing flow: step data + autoplay ---------- */
+            const flowSteps = [
+                { num: "BƯỚC 01", title: "Đăng Ký Test", desc: "Tham gia Server Discord chính thức và gửi yêu cầu đăng ký Test trình độ PvP.", icon: "fa-solid fa-gamepad" },
+                { num: "BƯỚC 02", title: "Xếp Lịch Với Tester", desc: "Đội ngũ Tester sẽ xác nhận thông tin và hẹn thời gian thi đấu phù hợp.", icon: "fa-solid fa-calendar-check" },
+                { num: "BƯỚC 03", title: "Thi Đấu & Đánh Giá", desc: "Thực hiện các trận solo ở Gamemode bạn đã chọn dưới sự giám sát trực tiếp.", icon: "fa-solid fa-swords" },
+                { num: "BƯỚC 04", title: "Nhận Tier & Cập Nhật BXH", desc: "Kết quả được chấm ngay lập tức và cấp Rank chính thức trên Bảng Xếp Hạng.", icon: "fa-solid fa-trophy" }
+            ];
+            let currentStep = 0;
+            let flowTimer = null;
+            const flowContent = document.querySelector('.flow-main-content');
+
+            function setStep(index) {
+                currentStep = index;
+                function apply() {
+                    document.getElementById("stepCounter").innerText = (index + 1) + "/" + flowSteps.length;
+                    document.getElementById("flowStepNum").innerText = flowSteps[index].num;
+                    document.getElementById("flowStepTitle").innerText = flowSteps[index].title;
+                    document.getElementById("flowStepDesc").innerText = flowSteps[index].desc;
+                    document.getElementById("flowIcon").className = flowSteps[index].icon + " flow-icon";
+                    if (flowContent) {
+                        flowContent.style.opacity = '1';
+                        flowContent.style.transform = 'translateY(0)';
+                    }
+                }
+                if (flowContent && !reduceMotion) {
+                    flowContent.style.opacity = '0';
+                    flowContent.style.transform = 'translateY(10px)';
+                    setTimeout(apply, 220);
+                } else {
+                    apply();
+                }
+                document.querySelectorAll(".progress-segment").forEach(function (seg, i) {
+                    seg.classList.toggle('active', i === index);
+                });
+            }
+
+            function startFlowAutoplay() {
+                clearInterval(flowTimer);
+                if (reduceMotion) return;
+                flowTimer = setInterval(function () {
+                    setStep((currentStep + 1) % flowSteps.length);
+                }, 4500);
+            }
+
+            document.querySelectorAll('.progress-segment').forEach(function (seg) {
+                seg.addEventListener('click', function () {
+                    setStep(parseInt(seg.dataset.index, 10));
+                    startFlowAutoplay();
+                });
+            });
+            startFlowAutoplay();
+
+            /* ---------- FAQ accordion ---------- */
+            document.querySelectorAll(".faq-item").forEach(function (item) {
+                item.querySelector(".faq-question").addEventListener("click", function () {
+                    item.classList.toggle("active");
+                });
+            });
+
+            /* ---------- Mode selection ---------- */
+            document.querySelectorAll(".mode-item").forEach(function (mode) {
+                mode.addEventListener("click", function () {
+                    document.querySelectorAll(".mode-item").forEach(function (m) { m.classList.remove("active"); });
+                    mode.classList.add("active");
+                    mode.classList.add("pulse-select");
+                    setTimeout(function () { mode.classList.remove("pulse-select"); }, 500);
+                });
+            });
+
+            /* ---------- Ambient particle canvas ---------- */
+            (function () {
+                const canvas = document.getElementById('particles');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let w, h, particles = [];
+                const isMobile = window.innerWidth < 768;
+                const count = reduceMotion ? 0 : (isMobile ? 30 : 70);
+                let visible = true;
+
+                function resize() {
+                    w = canvas.width = window.innerWidth;
+                    h = canvas.height = window.innerHeight;
+                }
+                function createParticles() {
+                    particles = [];
+                    for (let i = 0; i < count; i++) {
+                        particles.push({
+                            x: Math.random() * w,
+                            y: Math.random() * h,
+                            r: Math.random() * 1.6 + 0.4,
+                            speed: Math.random() * 0.3 + 0.05,
+                            drift: (Math.random() - 0.5) * 0.3,
+                            alpha: Math.random() * 0.5 + 0.15,
+                            twinkleSpeed: Math.random() * 0.02 + 0.006,
+                            twinklePhase: Math.random() * Math.PI * 2
+                        });
+                    }
+                }
+                function draw() {
+                    ctx.clearRect(0, 0, w, h);
+                    const t = Date.now() * 0.001;
+                    particles.forEach(function (p) {
+                        p.y -= p.speed;
+                        p.x += p.drift;
+                        if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+                        const twinkle = (Math.sin(t * (p.twinkleSpeed * 50) + p.twinklePhase) + 1) / 2;
+                        const alpha = p.alpha * (0.4 + 0.6 * twinkle);
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255,255,255,' + alpha + ')';
+                        if (!isMobile) {
+                            ctx.shadowBlur = 5;
+                            ctx.shadowColor = 'rgba(255,255,255,0.7)';
+                        } else {
+                            ctx.shadowBlur = 0;
+                        }
+                        ctx.fill();
+                    });
+                    if (visible && count > 0) requestAnimationFrame(draw);
+                }
+                document.addEventListener('visibilitychange', function () {
+                    visible = !document.hidden;
+                    if (visible && count > 0) requestAnimationFrame(draw);
+                });
+                window.addEventListener('resize', resize);
+                resize();
+                if (count > 0) {
+                    createParticles();
+                    requestAnimationFrame(draw);
+                }
+            })();
+        });
+    {% endraw %}
+    </script>
+</body>
+</html>
