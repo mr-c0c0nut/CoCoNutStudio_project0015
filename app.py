@@ -1,4 +1,5 @@
-from flask import Flask, render_template_string
+import os
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -13,17 +14,14 @@ def get_system_stats():
     }
 
 # ==========================================
-# HTML / CSS / JS TEMPLATE (CINEMATIC ANGEL EDITION)
-# ==========================================
-# [EXTRACTED] HTML Template -> templates/index.html
-
-# ==========================================
 # FLASK ROUTE
 # ==========================================
 @app.route('/')
 def home():
     stats = get_system_stats()
-    return render_template("index.html")
+    return render_template("index.html", stats=stats)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    # Lấy cổng từ biến môi trường của Render (mặc định 5000 khi chạy local)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
