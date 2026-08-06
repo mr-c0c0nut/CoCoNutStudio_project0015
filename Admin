@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảng Điều Khiển Kỹ Thuật Viên - ANGEL TIER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --bg-void: #030304;
+        --bg-card: rgba(16, 17, 23, 0.6);
+        --bg-card-border: rgba(255, 255, 255, 0.1);
+        --pure-white: #ffffff;
+        --text-silver: #a3a7ba;
+        --text-dim: #5c6076;
+        --danger: #ff6b6b;
+        --success: #9dffb0;
+        --font-main: 'Plus Jakarta Sans', sans-serif;
+        --font-heading: 'Cinzel', serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
+    body {
+        background-color: var(--bg-void);
+        background-image: radial-gradient(circle at 50% -5%, rgba(255,255,255,0.08) 0%, transparent 50%);
+        color: var(--pure-white);
+        min-height: 100vh;
+        padding: 28px 5%;
+    }
+    header {
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+        margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--bg-card-border);
+    }
+    .admin-title { display: flex; align-items: center; gap: 12px; }
+    .admin-title i { font-size: 1.6rem; }
+    .admin-title h1 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; }
+    .admin-title p { color: var(--text-silver); font-size: 0.8rem; }
+
+    .btn-logout {
+        background: rgba(255,255,255,0.06); border: 1px solid var(--bg-card-border); color: var(--pure-white);
+        padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.85rem;
+        display: flex; align-items: center; gap: 8px; transition: all 0.25s ease;
+    }
+    .btn-logout:hover { background: rgba(255,80,80,0.15); border-color: rgba(255,80,80,0.4); color: var(--danger); }
+
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .stat-box {
+        background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 14px;
+        padding: 20px; text-align: center;
+    }
+    .stat-box .val { font-family: var(--font-heading); font-size: 1.9rem; font-weight: 800; margin-bottom: 4px; }
+    .stat-box .lbl { font-size: 0.72rem; color: var(--text-silver); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+    .stat-box.online .val { color: var(--success); }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); display: inline-block; margin-right: 6px; animation: pulse 1.6s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+    .panel {
+        background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 16px;
+        padding: 24px; margin-bottom: 24px;
+    }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+    .panel-header h2 { font-size: 1.1rem; font-weight: 800; }
+    .panel-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+        border: none; border-radius: 10px; padding: 10px 18px; font-weight: 700; font-size: 0.85rem;
+        cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.25s ease;
+    }
+    .btn-white { background: #fff; color: #000; }
+    .btn-white:hover { background: #e6e6e6; transform: translateY(-1px); }
+    .btn-outline { background: rgba(255,255,255,0.05); border: 1px solid var(--bg-card-border); color: #fff; }
+    .btn-outline:hover { background: rgba(255,255,255,0.12); }
+    .btn-danger { background: rgba(255,80,80,0.12); border: 1px solid rgba(255,80,80,0.3); color: var(--danger); }
+    .btn-danger:hover { background: rgba(255,80,80,0.22); }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+        text-align: left; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
+        color: var(--text-silver); padding: 10px 12px; border-bottom: 1px solid var(--bg-card-border);
+    }
+    tbody td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .cell-input {
+        width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--bg-card-border);
+        color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 0.88rem; outline: none;
+    }
+    .cell-input:focus { border-color: rgba(255,255,255,0.4); }
+    select.cell-input { appearance: none; cursor: pointer; }
+
+    .row-delete { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 1rem; padding: 6px; }
+    .row-delete:hover { color: var(--danger); }
+
+    .empty-table { text-align: center; padding: 30px; color: var(--text-silver); font-size: 0.9rem; }
+
+    .save-toast {
+        position: fixed; bottom: 24px; right: 24px; background: #111219; border: 1px solid rgba(255,255,255,0.2);
+        padding: 14px 20px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 10px;
+        transform: translateY(20px); opacity: 0; transition: all 0.35s ease; pointer-events: none; z-index: 50;
+    }
+    .save-toast.show { transform: translateY(0); opacity: 1; }
+    .save-toast.success i { color: var(--success); }
+    .save-toast.error i { color: var(--danger); }
+
+    @media (max-width: 700px) {
+        thead { display: none; }
+        table, tbody, tr, td { display: block; width: 100%; }
+        tbody tr { border: 1px solid var(--bg-card-border); border-radius: 10px; margin-bottom: 12px; padding: 8px; }
+        tbody td { border: none; padding: 6px 4px; }
+        tbody td::before { content: attr(data-label); display: block; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="admin-title">
+        <i class="fa-solid fa-shield-halved"></i>
+        <div>
+            <h1>Bảng Điều Khiển Kỹ Thuật Viên</h1>
+            <p>ANGEL TIER — Quản lý dữ liệu & theo dõi truy cập</p>
+        </div>
+    </div>
+    <button class="btn-logout" id="logoutBtn" type="button"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+</header>
+
+<div class="stats-row">
+    <div class="stat-box online">
+        <div class="val"><span class="live-dot"></span><span id="statOnline">0</span></div>
+        <div class="lbl">Đang truy cập (Real-time)</div>
+    </div>
+    <div class="stat-box">
+        <div class="val" id="statTotal">0</div>
+        <div class="lbl">Tổng lượt truy cập</div>
+    </div>
+    <div class="stat-box">
+        <div class="val" id="statPlayers">0</div>
+        <div class="lbl">Người chơi trong hệ thống</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Dữ Liệu Người Chơi</h2>
+        <div class="panel-actions">
+            <button class="btn btn-outline" id="addRowBtn" type="button"><i class="fa-solid fa-plus"></i> Thêm người chơi</button>
+            <button class="btn btn-white" id="saveBtn" type="button"><i class="fa-solid fa-floppy-disk"></i> Lưu dữ liệu</button>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width:26%">Tên người chơi</th>
+                <th style="width:22%">Mode</th>
+                <th style="width:18%">Tier</th>
+                <th style="width:16%">Điểm</th>
+                <th style="width:10%"></th>
+            </tr>
+        </thead>
+        <tbody id="playersBody"></tbody>
+    </table>
+    <div class="empty-table" id="emptyState" style="display:none;">Chưa có người chơi nào. Bấm "Thêm người chơi" để bắt đầu.</div>
+</div>
+
+<div class="save-toast" id="saveToast"><i class="fa-solid fa-circle-check"></i><span id="saveToastText">Đã lưu thành công</span></div>
+
+<script>
+    const MODES = ["SWORD", "NETHOP", "POT", "SMP", "UHC", "AXE", "VANILLA", "MACE"];
+    const TIERS = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
+
+    const playersBody = document.getElementById('playersBody');
+    const emptyState = document.getElementById('emptyState');
+    let players = [];
+
+    function renderRow(p, index) {
+        const tr = document.createElement('tr');
+
+        const nameTd = document.createElement('td');
+        nameTd.dataset.label = 'Tên';
+        const nameInput = document.createElement('input');
+        nameInput.className = 'cell-input';
+        nameInput.value = p.name || '';
+        nameInput.placeholder = 'Tên người chơi (IGN)';
+        nameInput.addEventListener('input', function () { players[index].name = nameInput.value; });
+        nameTd.appendChild(nameInput);
+
+        const modeTd = document.createElement('td');
+        modeTd.dataset.label = 'Mode';
+        const modeSelect = document.createElement('select');
+        modeSelect.className = 'cell-input';
+        MODES.forEach(function (m) {
+            const opt = document.createElement('option');
+            opt.value = m; opt.textContent = m;
+            if (p.mode === m) opt.selected = true;
+            modeSelect.appendChild(opt);
+        });
+        modeSelect.addEventListener('change', function () { players[index].mode = modeSelect.value; });
+        modeTd.appendChild(modeSelect);
+
+        const tierTd = document.createElement('td');
+        tierTd.dataset.label = 'Tier';
+        const tierSelect = document.createElement('select');
+        tierSelect.className = 'cell-input';
+        TIERS.forEach(function (t) {
+            const opt = document.createElement('option');
+            opt.value = t; opt.textContent = t;
+            if (p.tier === t) opt.selected = true;
+            tierSelect.appendChild(opt);
+        });
+        tierSelect.addEventListener('change', function () { players[index].tier = tierSelect.value; });
+        tierTd.appendChild(tierSelect);
+
+        const scoreTd = document.createElement('td');
+        scoreTd.dataset.label = 'Điểm';
+        const scoreInput = document.createElement('input');
+        scoreInput.className = 'cell-input';
+        scoreInput.type = 'number';
+        scoreInput.value = p.score != null ? p.score : 0;
+        scoreInput.addEventListener('input', function () { players[index].score = parseInt(scoreInput.value, 10) || 0; });
+        scoreTd.appendChild(scoreInput);
+
+        const delTd = document.createElement('td');
+        const delBtn = document.createElement('button');
+        delBtn.className = 'row-delete';
+        delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        delBtn.addEventListener('click', function () {
+            players.splice(index, 1);
+            renderTable();
+        });
+        delTd.appendChild(delBtn);
+
+        tr.appendChild(nameTd);
+        tr.appendChild(modeTd);
+        tr.appendChild(tierTd);
+        tr.appendChild(scoreTd);
+        tr.appendChild(delTd);
+        return tr;
+    }
+
+    function renderTable() {
+        playersBody.innerHTML = '';
+        emptyState.style.display = players.length ? 'none' : 'block';
+        players.forEach(function (p, i) { playersBody.appendChild(renderRow(p, i)); });
+        document.getElementById('statPlayers').textContent = players.length;
+    }
+
+    function loadPlayers() {
+        fetch('/api/players').then(function (r) { return r.json(); }).then(function (data) {
+            players = Array.isArray(data) ? data : [];
+            renderTable();
+        }).catch(function () { players = []; renderTable(); });
+    }
+
+    document.getElementById('addRowBtn').addEventListener('click', function () {
+        players.push({ name: '', mode: MODES[0], tier: TIERS[0], score: 0 });
+        renderTable();
+    });
+
+    const toast = document.getElementById('saveToast');
+    const toastText = document.getElementById('saveToastText');
+    function showToast(msg, isError) {
+        toastText.textContent = msg;
+        toast.classList.toggle('error', !!isError);
+        toast.classList.toggle('success', !isError);
+        toast.classList.add('show');
+        setTimeout(function () { toast.classList.remove('show'); }, 2600);
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', function () {
+        fetch('/api/players', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ players: players })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.ok) {
+                showToast('Đã lưu ' + data.count + ' người chơi — dữ liệu vẫn còn nếu server khởi động lại.');
+            } else {
+                showToast('Lưu thất bại: ' + (data.error || 'lỗi không xác định'), true);
+            }
+        })
+        .catch(function () { showToast('Không thể kết nối tới server.', true); });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+        fetch('/api/admin/logout', { method: 'POST' }).finally(function () { window.location.href = '/'; });
+    });
+
+    function refreshStats() {
+        fetch('/api/admin/stats').then(function (r) {
+            if (r.status === 403) { window.location.href = '/'; throw new Error('unauthorized'); }
+            return r.json();
+        }).then(function (data) {
+            if (!data.ok) return;
+            document.getElementById('statOnline').textContent = data.online_now;
+            document.getElementById('statTotal').textContent = data.total_visits;
+        }).catch(function () {});
+    }
+
+    loadPlayers();
+    refreshStats();
+    setInterval(refreshStats, 5000);
+</script>
+</body>
+</html>
